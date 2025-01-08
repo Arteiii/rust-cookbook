@@ -6,6 +6,8 @@ This example sorts a Vector of integers via [`vec::sort`]. Alternative would
 be to use [`vec::sort_unstable`] which can be faster, but does not preserve
 the order of equal elements.
 
+helllo
+
 ```rust,edition2018
 fn main() {
     let mut vec = vec![1, 5, 10, 2, 15];
