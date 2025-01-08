@@ -347,3 +347,5 @@ YAML
 YYYY
 zurich
 enum
+thiserror
+tempfile
