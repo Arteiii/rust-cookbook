@@ -17,8 +17,6 @@ should find in the recipes an easy reminder of how to accomplish
 common tasks.
 
 
-helllo
-
 ## How to read this book
 
 The cookbook [index] contains the full list of recipes, organized into
