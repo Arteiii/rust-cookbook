@@ -1,0 +1,53 @@
+name: Spell Check
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+
+jobs:
+  spellcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Aspell
+        run: sudo apt-get update && sudo apt-get install -y aspell aspell-en
+
+      - name: Prepare Dictionary
+        run: |
+          mkdir -p /tmp/ci
+          if [ ! -f ./ci/dictionary.txt ]; then
+              echo "Generating dictionary file as it doesn't exist."
+              echo "personal_ws-1.1 en 0 utf-8" > ./ci/dictionary.txt
+              find ./src -type f -name '*.md' -exec cat {} + | aspell --ignore 3 list | sort -u >> ./ci/dictionary.txt
+          fi
+          cp ./ci/dictionary.txt /tmp/ci/dictionary.txt
+
+      - name: Run Spell Check
+        run: |
+          dict_path="/tmp/ci/dictionary.txt"
+          retval=0
+
+          for fname in $(find ./src -type f -name '*.md'); do
+              echo "Checking file: $fname"
+              errors=$(aspell --ignore 3 --personal="$dict_path" list < "$fname")
+              if [ -n "$errors" ]; then
+                  echo "Typos found in $fname:"
+                  echo "$errors"
+                  grep --with-filename --line-number --color=always -E "$(echo "$errors" | tr '\n' '|')" "$fname" || true
+                  retval=1
+              fi
+          done
+
+          exit $retval
+
+      - name: Report Success
+        if: success()
+        run: echo "No typos found!"
+
+      - name: Report Failure
+        if: failure()
+        run: echo "Typos were detected. Please review and fix the reported issues."
