@@ -18,36 +18,34 @@ jobs:
 
       - name: Prepare Dictionary
         run: |
-          mkdir -p /tmp/ci
           if [ ! -f ./ci/dictionary.txt ]; then
               echo "Generating dictionary file as it doesn't exist."
               echo "personal_ws-1.1 en 0 utf-8" > ./ci/dictionary.txt
               find ./src -type f -name '*.md' -exec cat {} + | aspell --ignore 3 list | sort -u >> ./ci/dictionary.txt
           fi
-          cp ./ci/dictionary.txt /tmp/ci/dictionary.txt
 
       - name: Run Spell Check
         run: |
-          dict_path="/tmp/ci/dictionary.txt"
+          dict_path="./ci/dictionary.txt"
           retval=0
 
           for fname in $(find ./src -type f -name '*.md'); do
-              echo "Checking file: $fname"
               errors=$(aspell --ignore 3 --personal="$dict_path" list < "$fname")
               if [ -n "$errors" ]; then
                   echo "Typos found in $fname:"
-                  echo "$errors"
-                  grep --with-filename --line-number --color=always -E "$(echo "$errors" | tr '\n' '|')" "$fname" || true
+                  echo "$errors" | tr ' ' '\n'
                   retval=1
               fi
           done
 
           exit $retval
 
+      - name: Fail on Typos
+        if: failure()
+        run: |
+          echo "::error title=Spell Check::Typos were detected. Please fix the reported issues."
+
       - name: Report Success
         if: success()
         run: echo "No typos found!"
 
-      - name: Report Failure
-        if: failure()
-        run: echo "Typos were detected. Please review and fix the reported issues."
