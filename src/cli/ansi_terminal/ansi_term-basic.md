@@ -8,6 +8,8 @@ There are two main data structures in [`ansi_term`]: [`ANSIString`] and [`Style`
 
 **Note:** British English uses *Colour* instead of *Color*, don't get confused
 
+helllllllllllooooo
+
 ### Printing colored text to the Terminal
 
 ```rust,edition2018
