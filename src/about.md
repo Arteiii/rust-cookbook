@@ -2,7 +2,7 @@
 
 ## Table of contents
 
-- [Who this book is for](#who-this-book-is-for)
+- [Who this book is for](#who-ths-book-is-for)
 - [How to read this book](#how-to-read-this-book)
 - [How to use the recipes](#how-to-use-the-recipes)
 - [A note about error handling](#a-note-about-error-handling)
